@@ -101,7 +101,9 @@ public class LocalServiceTest {
 	public void devePagar75PctNoFilme3() throws FilmeSemEstoqueException, LocadoraException {
 		// cenario
 		Usuario usuario = new Usuario();
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4d), new Filme("Filme 2", 1, 4d),
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 1, 4d),
+				new Filme("Filme 2", 1, 4d),
 				new Filme("Filme 3", 1, 4d));
 
 		// ação
