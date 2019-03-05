@@ -32,41 +32,28 @@ public class LocacaoService {
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		double valorTotal = 0d;
-		for (Filme filme : filmes) {
-			valorTotal += filme.getPrecoLocacao();
-			if (filmes.size() == 3) {
-				double desconto25 = filmes.get(2).getPrecoLocacao() - (filmes.get(2).getPrecoLocacao() * 0.25);
-				double total = desconto25;
-				locacao.setValor(total);
-			}
-			if (filmes.size() == 4) {
-				double desconto25 = filmes.get(2).getPrecoLocacao() - (filmes.get(2).getPrecoLocacao() * 0.25);
-				double desconto50 = filmes.get(3).getPrecoLocacao() - (filmes.get(3).getPrecoLocacao() * 0.5);
-				double total = desconto25 + desconto50;
-				locacao.setValor(total);
+		double valorTotal = 0;
 
+		for (int i = 0; i < filmes.size(); i++) {
+			Filme filme = filmes.get(i);
+			Double valorFilme = filme.getPrecoLocacao();
+			if (i == 2) {
+				valorFilme *= 0.75;
 			}
-			if (filmes.size() == 5) {
-				double desconto25 = filmes.get(2).getPrecoLocacao() - (filmes.get(2).getPrecoLocacao() * 0.25);
-				double desconto50 = filmes.get(3).getPrecoLocacao() - (filmes.get(3).getPrecoLocacao() * 0.5);
-				double desconto75 = filmes.get(4).getPrecoLocacao() - (filmes.get(4).getPrecoLocacao() * 0.75);
-				double total = desconto25 + desconto50 + desconto75;
-				locacao.setValor(total);
-
+			if(i == 3) {
+				valorFilme *= 0.5;
 			}
-			if (filmes.size() == 6) {
-				double locacao1 = filmes.get(0).getPrecoLocacao();
-				double locacao2 = filmes.get(1).getPrecoLocacao();
-				double desconto25 = filmes.get(2).getPrecoLocacao() - (filmes.get(2).getPrecoLocacao() * 0.25);
-				double desconto50 = filmes.get(3).getPrecoLocacao() - (filmes.get(3).getPrecoLocacao() * 0.5);
-				double desconto75 = filmes.get(4).getPrecoLocacao() - (filmes.get(4).getPrecoLocacao() * 0.75);
-				double desconto100 = filmes.get(5).getPrecoLocacao() - (filmes.get(5).getPrecoLocacao());
-				double total = locacao1 + locacao2 + desconto25 + desconto50 + desconto75 + desconto100;
-				locacao.setValor(total);
-
-
+			if (i == 4) {
+				valorFilme *= 0.25;
 			}
+			if (i == 5) {
+				valorFilme *= 0;
+			}
+			if (i > 5) {
+				valorFilme *= 0;
+			}
+			valorTotal += valorFilme;
+			locacao.setValor(valorTotal);
 		}
 		
 
