@@ -31,7 +31,7 @@ import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
 
-public class LocalServiceTest {
+public class LocacaoServiceTest {
 	private LocacaoService service;
 
 	@Rule
@@ -101,76 +101,6 @@ public class LocalServiceTest {
 
 	}
 
-	@Test
-	public void devePagar75PctNoFilme3() throws FilmeSemEstoqueException, LocadoraException {
-		// cenario
-		Usuario usuario = new Usuario();
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4d),
-				new Filme("Filme 2", 1, 4d),
-				new Filme("Filme 3", 1, 4d));
-
-		// ação
-		Locacao resultado = service.alugarFilme(usuario, filmes);
-
-		// verificação
-		Assert.assertThat(resultado.getValor(), is(11d));
-	}
-
-	@Test
-	public void devePagar50PctNoFilme4() throws FilmeSemEstoqueException, LocadoraException {
-		// cenario
-		Usuario usuario = new Usuario();
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4d),
-				new Filme("Filme 2", 1, 4d),
-				new Filme("Filme 3", 1, 4d),
-				new Filme("Filme 4", 1, 4d));
-
-		// ação
-		Locacao resultado = service.alugarFilme(usuario, filmes);
-
-		// verificação
-		Assert.assertThat(resultado.getValor(), is(13d));
-	}
-	@Test
-	public void devePagar25PctNoFilme5() throws FilmeSemEstoqueException, LocadoraException {
-		// cenario
-		Usuario usuario = new Usuario();
-		List<Filme> filmes = Arrays.asList(
-				new Filme("Filme 1", 1, 4d),
-				new Filme("Filme 2", 1, 4d),
-				new Filme("Filme 3", 1, 4d),
-				new Filme("Filme 4", 1, 4d),
-				new Filme("Filme 5", 1, 4d));
-
-		// ação
-		Locacao resultado = service.alugarFilme(usuario, filmes);
-
-		// verificação
-		Assert.assertThat(resultado.getValor(), is(14d));
-	}
-	@Test
-	public void devePagar0PctNoFilme6() throws FilmeSemEstoqueException, LocadoraException {
-		// cenario
-		Usuario usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(new Filme(
-				"Filme 1", 1, 10d),
-				new Filme("Filme 2", 1, 10d),
-				new Filme("Filme 3", 1, 10d),
-				new Filme("Filme 4", 1, 10d),
-				new Filme("Filme 5", 1, 10d),
-				new Filme("Filme 6", 1, 10d));
-
-		// ação
-		service.alugarFilme(usuario, filmes);
-
-		// verificação
-		Assert.assertEquals(6, filmes.size(), 0.1);
-		Assert.assertEquals(35, service.alugarFilme(usuario, filmes).getValor(), 0.01);
-
-	}
-	
 	@Test
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(),
