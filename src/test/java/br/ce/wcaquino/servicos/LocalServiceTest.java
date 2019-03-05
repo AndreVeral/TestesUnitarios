@@ -8,14 +8,17 @@ import static org.junit.Assert.assertThat;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -44,7 +47,8 @@ public class LocalServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(),
+				Calendar.SATURDAY));
 		// cenario
 
 		Usuario usuario = new Usuario("Usuario 1");
@@ -165,5 +169,23 @@ public class LocalServiceTest {
 		Assert.assertEquals(6, filmes.size(), 0.1);
 		Assert.assertEquals(35, service.alugarFilme(usuario, filmes).getValor(), 0.01);
 
+	}
+	
+	@Test
+	public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(),
+				Calendar.SATURDAY));
+		
+		//cenario
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5d));
+		
+		//ação
+		Locacao retorno = service.alugarFilme(usuario, filmes);
+		
+		//verificação
+	boolean ehSegunda = DataUtils.verificarDiaSemana(
+			retorno.getDataRetorno(), Calendar.MONDAY);
+	Assert.assertTrue(ehSegunda);
 	}
 }
