@@ -1,18 +1,16 @@
 package br.ce.wcaquino.servicos;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -31,52 +29,29 @@ import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocalServiceTest {
-private LocacaoService service;
-private static int contador;
-private static List<Integer> loops;
+	private LocacaoService service;
 
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	@Before
 	public void setUp() {
 		service = new LocacaoService();
-		loops = new ArrayList<Integer>();
-		contador = 1;
-		loops.add(contador);
-		System.out.println(loops.size());
-	}
-	
-	@After
-	public void tearDown() {
-		System.out.println("After");
-	}
-	
-	@BeforeClass
-	public static void setUpClass() {
-		System.out.println("Before class");
-	}
-	
-	@AfterClass
-	public static void tearDownClass() {
-		System.out.println("After class");
 	}
 
 	@Test
-	public void testLocacao() throws Exception {
+	public void deveAlugarFilme() throws Exception {
 
 		// cenario
-		
-		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 2, 5d);
-		
-		System.out.println("Teste!");
 
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5d));
+		
 		// ação
-		Locacao locacao = service.alugarFilme(usuario, filme);
+		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		// verificação
 		error.checkThat(locacao.getValor(), is(equalTo(5d)));
@@ -87,23 +62,25 @@ private static List<Integer> loops;
 	}
 
 	@Test(expected = FilmeSemEstoqueException.class)
-	public void testLocacao_filmeSemEstoque() throws Exception {
+	public void deveLancarExcecaoAoAlugarFilmeSemEstoque() throws Exception {
 		// cenario
 		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5d);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 4d));
+
 
 		// ação
-		service.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, filmes);
 	}
 
 	@Test
-	public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
 		// cenário
-		Filme filme = new Filme("Filme 1", 1, 5d);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5d));
+
 
 		// ação
 		try {
-			service.alugarFilme(null, filme);
+			service.alugarFilme(null, filmes);
 			Assert.fail();
 		} catch (LocadoraException e) {
 			assertThat(e.getMessage(), is("Usuário vazio"));
@@ -111,13 +88,35 @@ private static List<Integer> loops;
 	}
 
 	@Test
-	public void testLocacao_FilmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
 		// cenario
-				Usuario usuario = new Usuario("Usuario 1");
-				exception.expect(LocadoraException.class);
-				exception.expectMessage("Filme vazio");
+		Usuario usuario = new Usuario("Usuario 1");
+		
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Filme vazio");
+		// ação
+		service.alugarFilme(usuario, null);
+
+	}
+	@Test
+	public void deveAplicarDescontoFilme() throws FilmeSemEstoqueException, LocadoraException {
+		//cenario
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(
+				new Filme("Filme 1", 1, 10d),
+				new Filme("Filme 2", 1, 10d),
+				new Filme("Filme 3", 1, 10d),
+				new Filme("Filme 4", 1, 10d),
+				new Filme("Filme 5", 1, 10d),
+				new Filme("Filme 6", 1, 10d));
+		
 		//ação
-				service.alugarFilme(usuario, null);
-				
+		service.alugarFilme(usuario, filmes);
+		
+		
+		//verificação
+		Assert.assertEquals(6, filmes.size(), 0.1);
+		Assert.assertEquals(35, service.alugarFilme(usuario, filmes).getValor() , 0.01);
+		
 	}
 }
